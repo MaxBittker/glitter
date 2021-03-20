@@ -60,7 +60,7 @@ pos.y -= normScroll;
 pos.y = mod(pos.y,1.0);
 // pos.y -= normScroll, 1.0)-0.5;
   float m = 100.;
-  float scale = resolution.x/4.;
+  float scale = min(resolution.x/4.,200.);
   vec3 c = voronoi(scale * pos);
 
   float h = c.z * 50.;
