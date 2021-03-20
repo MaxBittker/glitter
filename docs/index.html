@@ -3,41 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>chromataphor</title>
+  <title>glittery</title>
 
   <body>
-   <!-- <button id='start'>Click me</button> -->
 
-    <!-- <video id="video" loop playsinline autoplay/> -->
     <style>
- body{
-     background-color:  #f4eeef;
-    }
- 
-      video {
-        /* height: 100vh; */
-        width: 100%;
-        /* margin-top: 100vh; */
-      }
 
-      button {
-        position: absolute;
-        z-index: 1000;
-        width: 100px;
-        height: 50px;
-      }
+
+
 
       canvas {
-        position: absolute;
+        position: fixed;
+        top:0;
+        left:0;
+      right:0;
+      bottom:0;
         z-index: 999;
         width: 100%;
-        height: 100%;
+        height: 100vw;
         padding: 0;
         margin: 0;
       }
 
       body {
-        width: 100vw;
+        height: 20000px;
+        overflow-x: hidden;
       }
     </style>
   </body>
