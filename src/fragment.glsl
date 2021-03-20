@@ -56,7 +56,7 @@ void main() {
 
   float normScroll = scroll/resolution.y;
   vec3 color;
-pos.y -= normScroll;
+pos.y -= normScroll*2.0;
 pos.y = mod(pos.y,1.0);
 // pos.y -= normScroll, 1.0)-0.5;
   float m = 100.;
