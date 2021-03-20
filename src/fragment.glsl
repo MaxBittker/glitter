@@ -90,8 +90,8 @@ pos.y = mod(pos.y,1.0);
   float shininess = 0.5;
   float power = gauss(lightDirection, eyeDirection, normal, shininess);
 
-float p = power* power*3.;
-  color = hsv2rgb(vec3(0.9, 0.5, 1.0)) * p;
+float p = power* power*power*power*3.;
+  color = hsv2rgb(vec3(c.z, 0.5, 1.0)) * p;
 
   gl_FragColor = vec4(color, 1.0);
 }
