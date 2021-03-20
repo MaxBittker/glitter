@@ -1,7 +1,6 @@
 #
 chromatophore
-https://maxbittker.github.io/chromatophore/
+http://maxbittker.github.io/glitter
 
-Cuttlefish chromatophores are specialized cells containing an elastic sack of colored pigment granules. 
+glittery scroll effect
 
-![cuttlefish](https://media2.giphy.com/media/Q4CVs6ungrxvO/giphy.gif)
