@@ -63,16 +63,16 @@ pos.y = mod(pos.y,1.0);
   float scale = resolution.x/4.;
   vec3 c = voronoi(scale * pos);
 
-  float h = c.z * 20.;
+  float h = c.z * 50.;
   // h = floor(c.z*20.);
 
   float dilation = noise(vec3(
-      pos * vec2(0,1.0) +
-      vec2(0.,  h), t*0.002)
+    //  pos * vec2(0,1.0) +
+      vec2(0.,  h),  normScroll + sin(t*0.1)*0.02)
 
   );
 
-  vec3 eyePosition = vec3(0., 0., 2.0);
+  vec3 eyePosition = vec3(0.,0.,  2.0);
   vec3 lightPosition = vec3(-1., 0.0, -2.0);
 
   vec3 surfacePosition = vec3((pos*0.1 ) ,0.0);
