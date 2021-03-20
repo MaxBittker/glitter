@@ -1,10 +1,7 @@
 precision highp float;
 uniform float t;
+uniform float scroll;
 uniform vec2 resolution;
-// uniform sampler2D backBuffer;
-// uniform sampler2D webcam;
-// uniform vec2 videoResolution;
-// uniform vec2 eyes[2];
 
 varying vec2 uv;
 
@@ -16,6 +13,7 @@ varying vec2 uv;
 #pragma glslify: smin = require(glsl-smooth-min)
 #pragma glslify: fbm3d = require('glsl-fractal-brownian-noise/3d')
 #pragma glslify: noise = require('glsl-noise/simplex/3d')
+#pragma glslify: gauss = require('glsl-specular-gaussian')
 
 // clang-format on
 #define PI 3.14159265359
@@ -55,148 +53,45 @@ vec3 voronoi(in vec2 x) {
 
 void main() {
   vec2 pos = squareFrame(resolution);
+
+  float normScroll = scroll/resolution.y;
   vec3 color;
-  // vec2 webcamCoord = (uv * 0.5 + vec2(0.5)) * resolution / videoResolution;
-  // vec2 flipwcord = vec2(1.) - webcamCoord;
-  // vec2 eye1 = eyes[0] / videoResolution;
-  // vec2 eye2 = eyes[1] / videoResolution;
-  vec2 textCoord = uv * 0.5 + vec2(0.5);
-  // vec2 closeEye =
-  // distance(eye1, flipwcord) < distance(eye2, flipwcord) ? eye1 : eye2;
-  // vec2 suck = -2.0 * pixel * normalize(flipwcord - closeEye) *
-  // random(uv + t * vec2(1.0));
-  // *(0.5 + noise(vec3(uv * 10., t * 5.)));
-
-  // vec3 webcamColor = texture2D(webcam, flipwcord).rgb * 0.95;
-  // float ed = smin(distance(eye1, flipwcord), distance(eye2, flipwcord),
-  // 0.01);
-
-  // float ifd = distance(eye1, eye2);
-
-  // float s = 0.1 * ifd * 4.;
-  // vec2 mid = (eye1 + eye2) * 0.5;
-
-  color = vec3(0.09, 0.089, 0.087);
-
-  vec3 red = vec3(0.9, 0.25, 0.);
-  vec3 yellow = vec3(0.85, 0.7, 0.);
-  vec3 brown = vec3(0.4, 0.2, 0.1);
-  // vec3 hue = red;
+pos.y -= normScroll;
+pos.y = mod(pos.y,1.0);
+// pos.y -= normScroll, 1.0)-0.5;
   float m = 100.;
-  // pos += noise(vec3(pos * 15., 0.5)) * 0.01;
-  float scale =
-      30. + (noise(vec3(pos * 0.5 + vec2(t * -0.001, 0.), t * 0.001)) * 1.5);
-  scale /= 3.0;
+  float scale = resolution.x/4.;
   vec3 c = voronoi(scale * pos);
 
-  // colorize
-  vec3 col = red;
-  float h = 0.;
-  if (c.z < 1.2) {
-    h = 1.;
-  }
-  if (c.z < 0.7) {
-    h = 2.;
-  }
-  // col += c.x * 0.5;
-  // vec3 col = hsv2rgb(vec3(hue, 0.4, 0.6));
-  // 0.5 + 0.5 * cos(c.y * 6.2831 + vec3(0.0, 1.0, 2.0));
-  // col *= clamp(1.0 - 0.4 * c.x * c.x, 0.0, 1.0);
-  // col -= (1.0 - smoothstep(0.08, 0.09, c.x));
-  // col = hsv2rgb(vec3(0.0, 1.0, 0.9));
-  // if (c.z < 1.2) {
-  //   col = hsv2rgb(vec3(0.1, 0.9, 0.9));
-  // }
-  // if (c.z < 0.7) {
-  //   col = hsv2rgb(vec3(0.05, 0.9, 0.35));
-  // }
-  vec2 spos = pos + noise(vec3(pos * 2., 0.5 + t * 0.0005)) * 0.0;
+  float h = c.z * 20.;
+  // h = floor(c.z*20.);
 
-  float dilation =
-      (scale / 30.) *
-          (noise(vec3((spos * vec2(1.0, 2.)) + vec2(t * -0.004, h * 5.) +
-                          (vec2(0.3) * h),
-                      t * 0.000)) -
-           0.3) *
-          1.3
+  float dilation = noise(vec3(
+      // pos * vec2(1.0) +
+      vec2(0.,  h+normScroll/2.), 0.)
 
-      + 0.6 + ((sin((t * 0.001) + c.z * 0.4) + 0.2) * 0.2);
+  );
 
-  // dilation = 1.0 - abs(length(webcamColor - col));
-  // dilation += 1.0;
-  float dd = (c.y - c.x) * (1.0 - c.x * 1.0);
-  dd *= dilation;
-  dd *= 1.5;
-  col = hsv2rgb(vec3(0.9, 0.6 - (dilation * 0.15) - c.x * 0.2, 0.7));
-  if (c.z < 1.2) {
-    col = hsv2rgb(vec3(0.5, 0.6 - dilation * 0.1, 0.6));
-  }
-  if (c.z < 0.7) {
-    col = hsv2rgb(vec3(0.7, 0.6 - dilation * 0.1, 0.95));
-  }
+  vec3 eyePosition = vec3(0., 0., 2.0);
+  vec3 lightPosition = vec3(-1., 0.0, -2.0);
 
-  if (dd > 0.4 || c.x < 0.05) {
-    color = col;
-  } else {
-    // color += col * 0.03;
-    // color = col * 0.00;
+  vec3 surfacePosition = vec3((pos*0.1 ) ,0.0);
 
-    color = vec3(244.0 / 255.0, 238.0 / 255.0, 239.0 / 255.0);
-  }
-  // color = (c.y - c.x) * col;
-  // vec3 cel = cellular(pos * 5.);
-  // color = hsv2rgb(
+  float  angleRange = 2.;
+  vec3 surfaceNormal = vec3(
+    sin(dilation*3.6)*angleRange,
+    cos(dilation*3.6)*angleRange,
+    1.);
 
-  //     vec3(cel.z / 9., 0.5, 0.5));
-  // if (cel.x < 0.05) {
-  //   color = vec3(0.);
-  // }
-  // vec3 col = hsv2rgb(vec3(t + floor(c.y * 1.5) / 5., 0.5, 0.5));
+  vec3 eyeDirection = normalize(eyePosition - surfacePosition);
+  vec3 lightDirection = normalize(lightPosition - surfacePosition);
+  vec3 normal = normalize(surfaceNormal);
 
-  // if (pos.x < -1. + pixel.x * 5.) {
-  //   if (mod(t, 20.) > 18.) {
-  //     // color = vec3(1., 1., 1.);
-  //   } else {
-  //     // color = vec3(0.2, 0.3, 0.4);
-  //   }
-  // } else {
-  //   float weight = luma(webcamColor);
+  float shininess = 0.5;
+  float power = gauss(lightDirection, eyeDirection, normal, shininess);
 
-  //   float edge = luma(texture2D(webcam, flipwcord - pixel.x).rgb) -
-  //                luma(texture2D(webcam, flipwcord + pixel.x).rgb);
+float p = power* power*3.;
+  color = hsv2rgb(vec3(0.9, 0.5, 1.0)) * p;
 
-  //   edge *= 3.;
-
-  //   if (distance(mid.x, flipwcord.x) < (ifd * 1.0) &&
-  //       mid.y - flipwcord.y < ifd * 1.8 && mid.y - flipwcord.y > ifd *
-  //       -2.5)
-  //       {
-  //   } else {
-  //     weight *= 0.8;
-  //   }
-  //   vec2 fall = 2. * pixel * vec2(1., 0) * (0.5 + random(vec2(uv.y, t)) *
-  //   0.5) *
-  //               (1. - weight);
-
-  // color = texture2D(backBuffer, textCoord - fall).rgb * 1.0;
-  //   if (uv.y < 0.0) {
-  //     // color =weight * vec3(1.0);
-  //   }
-  // }
-
-  // if (ed < s) {
-  // distance(mid,flipwcord)<0.2
-  // if (distance(mid.x, flipwcord.x) < (ifd * 1.0) &&
-  //     mid.y - flipwcord.y < ifd * 1.8 && mid.y - flipwcord.y > ifd * -2.5)
-  //     {
-  //   float weight = luma(webcamColor);
-  //   // color = weight * vec3(1.0);
-  // }
-  // if (luma(webcamColor) <
-  //  0.4) {
-  // 0.5 + 0.2 * noise(vec3(uv * 200., t * 0.1))) {
-  // color = vec3(1.);
-  // color *= 0.25;
-  // }
   gl_FragColor = vec4(color, 1.0);
 }

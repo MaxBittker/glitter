@@ -13,7 +13,7 @@ function downloadURI(uri, filename) {
 }
 
 const regl = require("regl")({
-  pixelRatio: Math.min(window.devicePixelRatio, 1)
+  pixelRatio: Math.min(window.devicePixelRatio, 2)
 });
 // const { setupWebcam } = require("./src/regl-webcam");
 let shaders = require("./src/pack.shader.js");
@@ -50,7 +50,8 @@ let drawTriangle = regl({
     resolution: ({ viewportWidth, viewportHeight }) => [
       viewportWidth,
       viewportHeight
-    ]
+    ],
+    scroll:()=>window.scrollY,
     // backBuffer: lastFrame
     // "eyes[0]": () => {
     //   // let positions = ct.getCurrentPosition();
@@ -87,8 +88,8 @@ let drawTriangle = regl({
 });
 
 // capturer.start();
-let f = 0;
-
+// let f = 0;
+regl._gl.canvas.style="height: "+ window.innerHeight+"px";
 regl.frame(function(context) {
   // regl.clear({
   // color: [0, 0, 0, 0]
