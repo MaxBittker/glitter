@@ -68,7 +68,7 @@ pos.y = mod(pos.y,1.0);
 
   float dilation = noise(vec3(
     //  pos * vec2(0,1.0) +
-      vec2(0.,  h),  normScroll + sin(t*0.1)*0.02)
+      vec2(sin(t*0.0005),  h+cos(t*0.0005)),  normScroll )
 
   );
 
