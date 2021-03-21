@@ -63,7 +63,7 @@ pos.y = mod(pos.y,1.0);
   float scale = min(resolution.x/4.,200.);
   vec3 c = voronoi(scale * pos);
 
-  float h = c.z * 50.;
+  float h = c.z * 500.;
   // h = floor(c.z*20.);
 
   float dilation = noise(vec3(
