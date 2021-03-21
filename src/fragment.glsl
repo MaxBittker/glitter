@@ -68,11 +68,11 @@ pos.y = mod(pos.y,1.0);
 
   float dilation = noise(vec3(
     //  pos * vec2(0,1.0) +
-      vec2(sin(t*0.0005),  h+cos(t*0.0005)),  normScroll )
+      vec2(sin(t*0.0003),  h+cos(t*0.0003)),  normScroll )
 
   );
 
-  vec3 eyePosition = vec3(0.,0.,  2.0);
+  vec3 eyePosition = vec3(0.,sin(t*0.10)*0.016,  2.0);
   vec3 lightPosition = vec3(-1., 0.0, -2.0);
 
   vec3 surfacePosition = vec3((pos*0.1 ) ,0.0);
